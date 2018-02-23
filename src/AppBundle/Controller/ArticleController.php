@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use JMS\Serializer\SerializationContext;
 
 class ArticleController extends Controller
 {
@@ -17,7 +18,8 @@ class ArticleController extends Controller
      */
     public function showAction(Article $article)
     {
-        $data = $this->get('jms_serializer')->serialize($article, 'json');
+        $data = $this->get('jms_serializer')->serialize($article, 'json',
+            SerializationContext::create()->setGroups(array('detail')));
 
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
@@ -48,7 +50,8 @@ class ArticleController extends Controller
     public function listAction()
     {
         $articles = $this->getDoctrine()->getRepository('AppBundle:Article')->findAll();
-        $data = $this->get('jms_serializer')->serialize($articles, 'json');
+        $data = $this->get('jms_serializer')->serialize($articles, 'json',
+            SerializationContext::create()->setGroups(array('list')));
 
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
